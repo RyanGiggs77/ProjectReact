@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import './Index.css';
+import './index.css';
 import { Layout, Input } from 'antd';
 const { Header, Content, Footer, Sider } = Layout;
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
