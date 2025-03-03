@@ -6,9 +6,9 @@ import Namecard from '../reused/namecard';
 const Dashboard = () => {
 
     return (
-        <div className="grid grid-cols-12 gap-10">
+        <div className="grid grid-cols-12 gap-2">
             {/* Left Section */}
-            <div className="col-span-3 w-[283px] h-[888px]">
+            <div className="col-span-3  h-[888px]">
                 <Namecard
                     name="Andrew Forbist"
                     balance="$562,000"
@@ -93,7 +93,7 @@ const Dashboard = () => {
                             </div>
                             <div className="flex flex-col items-center mt-4 gap-2">
                                 <Card
-                                    className=' rounded-2xl shadow-lg h-[103px] w-[251px]'
+                                    className=' rounded-2xl shadow-lg h-[103px] w-full'
                                 >
                                     <div className="">
                                         <div className="flex justify-between items-start font-bold">
@@ -109,19 +109,19 @@ const Dashboard = () => {
                                         </div>
                                         <div className='flex justify-between items-center'>
                                             <div className='flex'>
-                                                <div className='text-xs font-bold mr-1'>$5.000</div>
-                                                <div className='text-xs'>50%</div>
+                                                <div className='text-[10px] font-bold '>$5.000</div>
+                                                <div className='text-[10px]'>50%</div>
                                             </div>
                                             <div className='flex'>
-                                                <div className='text-xs mr-1'>Target: </div>
-                                                <div className='text-xs'>Target: $10.000</div>
+                                                <div className='text-[10px] mr-1'>Target: </div>
+                                                <div className='text-[10px]'>Target: $10.000</div>
                                             </div>
                                         </div>
                                     </div>
 
                                 </Card>
                                 <Card
-                                    className=' rounded-2xl shadow-lg h-[103px] w-[251px]'
+                                    className=' rounded-2xl shadow-lg h-[103px] w-full'
                                 >
                                     <div className="">
                                         <div className="flex justify-between items-start font-bold">
@@ -137,19 +137,19 @@ const Dashboard = () => {
                                         </div>
                                         <div className='flex justify-between items-center'>
                                             <div className='flex'>
-                                                <div className='text-xs font-bold mr-1'>$5.000</div>
-                                                <div className='text-xs'>50%</div>
+                                                <div className='text-[10px] font-bold mr-1'>$5.000</div>
+                                                <div className='text-[10px]'>50%</div>
                                             </div>
                                             <div className='flex'>
-                                                <div className='text-xs mr-1'>Target: </div>
-                                                <div className='text-xs'>Target: $10.000</div>
+                                                <div className='text-[10px] mr-1'>Target: </div>
+                                                <div className='text-[10px]'>Target: $10.000</div>
                                             </div>
                                         </div>
                                     </div>
 
                                 </Card>
                                 <Card
-                                    className=' rounded-2xl shadow-lg h-[103px] w-[251px]'
+                                    className=' rounded-2xl shadow-lg h-[103px] w-full'
                                 >
                                     <div className="">
                                         <div className="flex justify-between items-start font-bold">
@@ -165,12 +165,12 @@ const Dashboard = () => {
                                         </div>
                                         <div className='flex justify-between items-center'>
                                             <div className='flex'>
-                                                <div className='text-xs font-bold mr-1'>$5.000</div>
-                                                <div className='text-xs'>50%</div>
+                                                <div className='text-[10px] font-bold mr-1'>$5.000</div>
+                                                <div className='text-[10px]'>50%</div>
                                             </div>
                                             <div className='flex'>
-                                                <div className='text-xs mr-1'>Target: </div>
-                                                <div className='text-xs'>Target: $10.000</div>
+                                                <div className='text-[10px] mr-1'>Target: </div>
+                                                <div className='text-[10px]'>Target: $10.000</div>
                                             </div>
                                         </div>
                                     </div>
@@ -189,38 +189,36 @@ const Dashboard = () => {
                     theme={{
                         components: {
                             Card: {
-                                bodyPadding: 16
+                                bodyPadding: 0
                             },
                         },
                     }}
                 >
-            <div className="col-span-6 w-[566px] h-[888px]">
-                <div className="gap-2 flex">
-                    <div className='col-span-2'>
-                        <Card className='rounded-2xl shadow-lg w-[183px] h-[174px]'>
-                            <div className="flex justify-between items-center">
-                                <div><DollarOutlined className='h-9 w-9 justify-center bg-[#ECF4E9] color-[#ffffff]' /></div>
-                                <div><MoreOutlined /></div>
-                            </div>
-                            <div className='mt-8 flex flex-row gap-1 items-end justify-center bg-lime-500'>
-                                <div><RiseOutlined /></div>
-                                <div><PlusOutlined className='text-[8px]' /></div>
-                                <div className='text-xs'>1.78%</div>
-                            </div>
-                        </Card>
-                    </div>
-                    <div className='col-span-2'>
-                        <Card className='rounded-2xl shadow-lg w-[183px] h-[174px]'>
-                            
-                        </Card>
-                    </div>
-                    <div className='col-span-2'>
-                        <Card className='rounded-2xl shadow-lg w-[183px] h-[174px]'>
-                            
-                        </Card>
-                    </div>
-                </div>
-            </div>  
+            {/* Center Section */}
+<div className="col-span-6 h-[888px]">
+    <div className="grid grid-cols-3 gap-4">
+        <Card className="rounded-2xl shadow-lg h-[174px] flex flex-col justify-between p-4">
+            <div className="flex justify-between items-center">
+                <DollarOutlined className="h-9 w-9 bg-[#ECF4E9] p-2 rounded-md" />
+                <MoreOutlined />
+            </div>
+            <div className="flex bg-[#000000] items-center gap-1 mt-10 text-green-600">
+                <RiseOutlined />
+                <PlusOutlined className="text-xs" />
+                <span className="text-xs">1.78%</span>
+            </div>
+        </Card>
+
+        <Card className="rounded-2xl shadow-lg h-[174px] p-4 flex flex-col justify-center items-center">
+            <span>Content 2</span>
+        </Card>
+
+        <Card className="rounded-2xl shadow-lg h-[174px] p-4 flex flex-col justify-center items-center">
+            <span>Content 3</span>
+        </Card>
+    </div>
+</div>
+
             </ConfigProvider>
                     
         </div>
