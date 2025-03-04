@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, ConfigProvider, Progress, Select, Button, Table, Tabs, Tag } from 'antd';
+import { Card, ConfigProvider, Progress, Select, Button, Table, Tabs, Tag, Steps } from 'antd';
 import { WifiOutlined, PlusOutlined, EditOutlined, EllipsisOutlined, SettingOutlined, MoreOutlined, WarningOutlined, HomeOutlined, RocketOutlined, DollarOutlined, SlidersOutlined } from '@ant-design/icons';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { data } from '../data/chartsData'
@@ -259,82 +259,137 @@ const Dashboard = () => {
                         </Select>
                     </div>
                     <div className="flex justify-center w-auto items-center ">
-                    <ConfigProvider
-                        theme={{
-                            components: {
-                            Tabs: {
-                                inkBarColor: "#BBF49C",
-                            },
-                            },
-                        }}
+                        <ConfigProvider
+                            theme={{
+                                components: {
+                                    Tabs: {
+                                        inkBarColor: "#BBF49C",
+                                    },
+                                },
+                            }}
                         >
-                        <Tabs
-                            className='flex'
-                            defaultActiveKey="1"
-                            centered
+                            <Tabs
+                                className='flex'
+                                defaultActiveKey="1"
+                                centered
+                                items={[
+                                    {
+                                        label: 'Income ($4,800)',
+                                        key: '1',
+                                        children: <PieCharts />,
+                                    },
+                                    {
+                                        label: 'Expense ($3,500)',
+                                        key: '2',
+                                        children: <PieCharts />,
+                                    },
+                                ]}
+                            />
+                        </ConfigProvider>
+                    </div>
+                    <div className=" ">
+                        <div className="flex justify-between items-center mt-3">
+                            <div>
+                                <Tag color="#BBF49C" className="rounded-full">
+                                    <span>50%</span>
+                                </Tag>
+                                <span>Income</span>
+                            </div>
+                            <div>
+                                <span>$5000</span>
+                            </div>
+                        </div>
+                        <div className="flex justify-between items-center mt-3">
+                            <div>
+                                <Tag color="#BBF49C" className="rounded-full">
+                                    <span>50%</span>
+                                </Tag>
+                                <span>Income</span>
+                            </div>
+                            <div>
+                                <span>$5000</span>
+                            </div>
+                        </div>
+                        <div className="flex justify-between items-center mt-3">
+                            <div>
+                                <Tag color="#BBF49C" className="rounded-full">
+                                    <span>50%</span>
+                                </Tag>
+                                <span>Income</span>
+                            </div>
+                            <div>
+                                <span>$5000</span>
+                            </div>
+                        </div>
+                        <div className="flex justify-between items-center mt-3">
+                            <div>
+                                <Tag color="#BBF49C" className="rounded-full">
+                                    <span>50%</span>
+                                </Tag>
+                                <span>Income</span>
+                            </div>
+                            <div>
+                                <span>$5000</span>
+                            </div>
+                        </div>
+                        <div className="flex justify-between items-center mt-3">
+                            <div>
+                                <Tag color="#BBF49C" className="rounded-full">
+                                    <span>50%</span>
+                                </Tag>
+                                <span>Income</span>
+                            </div>
+                            <div>
+                                <span>$5000</span>
+                            </div>
+                        </div>
+                    </div>
+                </Card>
+                <Card className='h-[406px] rounded-2xl shadow-lg '>
+                    <div className="flex justify-between mb-2">
+                        <span className='text-lg font-bold'>Recent Activity</span>
+                        <MoreOutlined />
+                    </div>
+                    <span className='text-base'>Today</span>
+                    <div className="mt-1">
+                        <Steps
+                        size='small'
+                            direction="vertical"
+                            current={1}
                             items={[
                                 {
-                                    label: 'Income ($4,800)',
-                                    key: '1',
-                                    children: <PieCharts />,
+                                    title: 'Finished',
+                                    description: "this is description"
                                 },
                                 {
-                                    label: 'Expense ($3,500)',
-                                    key: '2',
-                                    children: <PieCharts />,
+                                    title: 'In Progress',
+                                    description: "this is description"
+                                },
+                                {
+                                    title: 'Waiting',
+                                    description: "this is description"
                                 },
                             ]}
                         />
-                    </ConfigProvider>
                     </div>
-                    <div className="  mt-4">
-
-                        {/* Tag */}
-                        <div className="">
-                        <Tag color="#BBF49C" className="rounded-full">
-                            <span>50%</span>
-                        </Tag>
-                        <span>Income</span>
-                        </div>
-                        <div>
-                            <span>$5000</span>
-                        </div>
-                        <div className="Flex">
-                        <Tag color="#BBF49C" className="rounded-full">
-                            <span>50%</span>
-                        </Tag>
-                        <span>Income</span>
-                        </div>
-                        <div>
-                            <span>$5000</span>
-                        </div>
-                        <div className="Flex">
-                        <Tag color="#BBF49C" className="rounded-full">
-                            <span>50%</span>
-                        </Tag>
-                        <span>Income</span>
-                        </div>
-                        <div>
-                            <span>$5000</span>
-                        </div>
-                        <div className="Flex">
-                        <Tag color="#BBF49C" className="rounded-full">
-                            <span>50%</span>
-                        </Tag>
-                        <span>Income</span>
-                        </div>
-                        <div>
-                            <span>$5000</span>
-                        </div>
-                        <div className="Flex">
-                        <Tag color="#BBF49C" className="rounded-full">
-                            <span>50%</span>
-                        </Tag>
-                        <span>Income</span>
-                        </div>
-                        <div>
-                            <span>$5000</span>
-                        </div>
+                    <span className='text-base'>Today</span>
+                    <div className="mt-1">
+                        <Steps
+                        size='small'
+                            direction="vertical"
+                            current={1}
+                            items={[
+                                {
+                                    title: 'Finished',
+                                    description: "this is description"
+                                },
+                                {
+                                    title: 'In Progress',
+                                    description: "this is description"
+                                },
+                               
+                            ]}
+                        />
                     </div>
                 </Card>
             </div>
