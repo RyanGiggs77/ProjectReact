@@ -2,7 +2,7 @@ import React from 'react'
 import { Card, Progress, ConfigProvider } from 'antd'
 import { MoreOutlined } from '@ant-design/icons'
 
-const StatusCard = ({ amount, target, percent, icon, title }) => {
+const CardStatus = ({ amount, target, percent, icon, title }) => {
     return (
         <ConfigProvider
             theme={{
@@ -41,4 +41,4 @@ const StatusCard = ({ amount, target, percent, icon, title }) => {
     )
 }
 
-export default StatusCard
+export default CardStatus;

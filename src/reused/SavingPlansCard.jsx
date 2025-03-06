@@ -1,7 +1,7 @@
 import React from 'react'
 import { Card, ConfigProvider } from 'antd'
 import { PlusOutlined, WarningOutlined, HomeOutlined, RocketOutlined } from '@ant-design/icons'
-import StatusCard from './StatusCard'
+import CardStatus from './CardStatus'
 
 const SavingPlansCard = () => {
     return (
@@ -28,21 +28,21 @@ const SavingPlansCard = () => {
                         <div className="text-2xl font-bold">$84,500</div>
                     </div>
                     <div className="flex flex-col items-center mt-4 gap-2">
-                        <StatusCard
+                        <CardStatus
                             icon={<WarningOutlined className='h-7 w-7 bg-[#ECF4E9] color-[#ffffff] justify-center rounded-md'/>}
                             title="Emergency"
                             amount={4000}
                             target={10000}
                             percent={40}
                         />
-                        <StatusCard
+                        <CardStatus
                             icon={<HomeOutlined className='h-7 w-7 bg-[#ECF4E9] color-[#ffffff] justify-center rounded-md'/>}
                             title="Home"
                             amount={10000}
                             target={20000}
                             percent={50}
                         />
-                        <StatusCard
+                        <CardStatus
                             icon={<RocketOutlined className='h-7 w-7 bg-[#ECF4E9] color-[#ffffff] justify-center rounded-md'/>}
                             title="Travel"
                             amount={20000}
