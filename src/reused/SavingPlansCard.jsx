@@ -1,7 +1,7 @@
 import React from 'react'
 import { Card, ConfigProvider } from 'antd'
 import { PlusOutlined, WarningOutlined, HomeOutlined, RocketOutlined } from '@ant-design/icons'
-import StatusCard from './Statuscard'
+import StatusCard from './StatusCard'
 
 const SavingPlansCard = () => {
     return (
