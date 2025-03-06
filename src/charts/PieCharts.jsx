@@ -1,13 +1,17 @@
 import React from 'react'
 import { PieChart, Pie, Tooltip, Legend, Cell } from 'recharts'
-import { statisticData } from '../data/statisticData'
 
-const PieCharts = () => {
+
+const PieCharts = ({ data }) => {
+    // Jika data berbentuk nested array (misalnya [ [obj1, obj2, ...] ])
+    const normalizedData = Array.isArray(data[0]) ? data[0] : data;
+    console.log(normalizedData);
+
     return (
         <div className='flex justify-center'>
             <PieChart width={200} height={150}>
                 <Pie
-                    data={statisticData}
+                    data={normalizedData}
                     cx="50%"
                     cy="50%"
                     innerRadius={45}
@@ -15,15 +19,18 @@ const PieCharts = () => {
                     paddingAngle={5}
                     dataKey="value"
                 >
-                    <Tooltip />
-                    <Legend />
-                    {statisticData.map((entry, index) => (
+                    {normalizedData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                 </Pie>
+                <Tooltip />
+                
             </PieChart>
         </div>
-    )
+    );
 }
+
+
+
 
 export default PieCharts

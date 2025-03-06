@@ -2,7 +2,7 @@ import React from 'react'
 import { Card, Progress, ConfigProvider } from 'antd'
 import { MoreOutlined } from '@ant-design/icons'
 
-const StatusCard = ({ totalSaving, currentSaving, target, percent, icon }) => {
+const StatusCard = ({ amount, target, percent, icon, title }) => {
     return (
         <ConfigProvider
             theme={{
@@ -18,7 +18,7 @@ const StatusCard = ({ totalSaving, currentSaving, target, percent, icon }) => {
                     <div className="flex justify-between items-start font-bold">
                         <div className='flex gap-2'>
                             <div className="flex">{icon}</div>
-                            <div className="flex text-base">Emergency Fund</div>
+                            <div className="flex text-base">{title} Fund</div>
                         </div>
                         <div className="flex"><MoreOutlined /></div>
                     </div>
@@ -27,7 +27,7 @@ const StatusCard = ({ totalSaving, currentSaving, target, percent, icon }) => {
                     </div>
                     <div className='flex justify-between items-center'>
                         <div className='flex'>
-                            <div className='text-[10px] font-bold mr-1'>${currentSaving}</div>
+                            <div className='text-[10px] font-bold mr-1'>${amount}</div>
                             <div className='text-[10px]'>{percent}%</div>
                         </div>
                         <div className='flex'>

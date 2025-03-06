@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, Tag, Flex } from 'antd';
 import { MoreOutlined, RiseOutlined, PlusOutlined, FallOutlined } from '@ant-design/icons';
 
-const IncomeCard = ({ icon, percent, income }) => {
+const IncomeCard = ({ icon, percent, income, title }) => {
     // Gunakan variabel agar lebih sederhana
     const bg = percent > 0 ? "#BBF49C" : "#FDCED1";
     const textColor = percent > 0 ? "#1E4841" : "#F73541";
