@@ -50,7 +50,9 @@ const App = () => {
                 <ProtectedRoute>
                   <Layout>
                     <Sider
+                      //tambahkan sllider untuk sider
                       collapsible
+                      reverseArrow={true}
                       collapsed={collapsed}
                       onCollapse={onCollapse}
                       trigger={null}
@@ -62,6 +64,9 @@ const App = () => {
                         position: 'fixed',
                         backgroundColor: '#ECF4E9',
                         height: '100vh',
+                        overflow: 'auto', // ✅ Tambahkan ini agar bisa scroll
+                        scrollbarWidth: 'thin', // ✅ (Opsional) Untuk mengatur lebar scrollbar
+    scrollbarColor: '#A0A0A0 transparent',
                       }}
                     >
                       <Sidebar collapsed={collapsed} />

@@ -2,8 +2,11 @@ import React from 'react'
 import Logo from '../assets/symbol.png';
 import Union from '../assets/Union.png';
 import { Card, ConfigProvider } from 'antd';
+import { useAuth } from '../context/authContext';
 
 const namecard = ({ name, balance, exp, cvv }) => {
+    const { currentUser } = useAuth();
+
     return (
         <ConfigProvider
             theme={{
@@ -14,7 +17,7 @@ const namecard = ({ name, balance, exp, cvv }) => {
                 },
             }}
         >
-            <Card className="w-full h-[174px] bg-[#1F3D2C] text-white rounded-2xl shadow-lg !p-0">
+            <Card className="w-full h-[174px] bg-[#1E4841] text-white rounded-2xl shadow-lg !p-0">
                 <div className="">
                     <div className="flex justify-between items-start">
                         <div className="flex ">
@@ -26,9 +29,10 @@ const namecard = ({ name, balance, exp, cvv }) => {
                     </div>
                 </div>
                 <div className="flex justify-between items-center mt-4 text-xl font-bold font-family">
-                    {name}
+                {currentUser ? currentUser.displayName || currentUser.email : 'Guest'}
+                
                 </div>
-                <div className="flex justify-between items-end mt-[35px]">
+                <div className="flex justify-between items-end mt-2">
                     {/* Balance Amount */}
                     <div>
                         <div className="text-[10px] opacity-80">Balance Amount</div>

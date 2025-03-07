@@ -1,16 +1,24 @@
+import React, { useState } from "react";
+import { Card, Select, Tabs, Tag, ConfigProvider } from "antd";
+import PieCharts from "../charts/PieCharts";
+import { statisticData } from "../data/statisticData";
 
+const totalIncome = statisticData.income.reduce((sum, item) => sum + item.value, 0);
+const totalExpense = statisticData.expense.reduce((sum, item) => sum + item.value, 0);
 
-import React from 'react'
-import { Card, Select, Tabs, Tag, ConfigProvider } from 'antd'
-import PieCharts from '../charts/PieCharts'
+const StatisticCard = () => {
+  const [activeTab, setActiveTab] = useState("income");
 
-
-const StatisticCard = ({ datas }) => {
   return (
     <Card className="h-[460px] rounded-2xl shadow-lg">
       <div className="flex justify-between items-center">
         <span className="font-bold text-base">Statistic</span>
-        <Select variant="borderless" className="text-xs" defaultValue="This Month" style={{ width: 120 }}>
+        <Select
+          variant="borderless"
+          className="text-xs"
+          defaultValue="This Month"
+          style={{ width: 120 }}
+        >
           <Select.Option value="This Month">This Month</Select.Option>
           <Select.Option value="Last Month">Last Month</Select.Option>
         </Select>
@@ -29,81 +37,39 @@ const StatisticCard = ({ datas }) => {
             className="flex"
             defaultActiveKey="1"
             centered
+            onChange={(key) => setActiveTab(key === "1" ? "income" : "expense")}
             items={[
               {
-                label: 'Income ($4,800)',
-                key: '1',
-                children: <PieCharts data={[datas]} />,
+                label: `Income ($${totalIncome})`,
+                key: "1",
+                children: <PieCharts data={statisticData.income} />,
               },
               {
-                label: 'Expense ($3,500)',
-                key: '2',
-                children: <PieCharts data={[datas]} />,
+                label: `Expense ($${totalExpense})`,
+                key: "2",
+                children: <PieCharts data={statisticData.expense} />,
               },
             ]}
           />
         </ConfigProvider>
       </div>
       <div className="mt-3">
-        <div className="flex justify-between items-center mt-3">
-          <div>
-            <Tag color="#BBF49C" className="rounded-full">
-              <span>50%</span>
-            </Tag>
-            <span>Income</span>
+        {statisticData[activeTab].map((item, index) => (
+          <div key={index} className="flex justify-between items-center mt-3">
+            <div className="flex items-center gap-2">
+              <Tag color={item.color} className="rounded-full">
+                <span>{((item.value / (activeTab === "income" ? totalIncome : totalExpense)) * 100).toFixed(0)}%</span>
+              </Tag>
+              <span>{item.name}</span>
+            </div>
+            <div>
+              <span>${item.value}</span>
+            </div>
           </div>
-          <div>
-            <span>$5000</span>
-          </div>
-        </div>
-        {/* Ulangi blok untuk item statistik lainnya */}
-        <div className="flex justify-between items-center mt-3">
-          <div>
-            <Tag color="#BBF49C" className="rounded-full">
-              <span>50%</span>
-            </Tag>
-            <span>Income</span>
-          </div>
-          <div>
-            <span>$5000</span>
-          </div>
-        </div>
-        <div className="flex justify-between items-center mt-3">
-          <div>
-            <Tag color="#BBF49C" className="rounded-full">
-              <span>50%</span>
-            </Tag>
-            <span>Income</span>
-          </div>
-          <div>
-            <span>$5000</span>
-          </div>
-        </div>
-        <div className="flex justify-between items-center mt-3">
-          <div>
-            <Tag color="#BBF49C" className="rounded-full">
-              <span>50%</span>
-            </Tag>
-            <span>Income</span>
-          </div>
-          <div>
-            <span>$5000</span>
-          </div>
-        </div>
-        <div className="flex justify-between items-center mt-3">
-          <div>
-            <Tag color="#BBF49C" className="rounded-full">
-              <span>50%</span>
-            </Tag>
-            <span>Income</span>
-          </div>
-          <div>
-            <span>$5000</span>
-          </div>
-        </div>
+        ))}
       </div>
     </Card>
-  )
-}
+  );
+};
 
-export default StatisticCard
+export default StatisticCard;

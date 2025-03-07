@@ -3,10 +3,12 @@ import { ConfigProvider, Avatar, Badge, Input, Button } from 'antd';
 import { MessageOutlined, BellOutlined } from '@ant-design/icons';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { doSignOut } from '../../firebase/auth';
+import { useAuth } from '../../context/authContext';
 
 const { Search } = Input;
 
 const Navbar = () => {
+  const { currentUser } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -39,12 +41,12 @@ const Navbar = () => {
       </div>
       <div className="flex flex-row-reverse items-center gap-4">
         {/* Tombol Logout */}
-        <Button onClick={handleLogout} type="primary" danger>
+        <Button onClick={handleLogout} type="primary" className="bg-[#1E4841] border-[#1E4841]">
           Logout
         </Button>
         <Avatar style={{ backgroundColor: '#BBF49C', color: '#f56a00' }} />
         <span className="text-[#1E4841] text-lg font-semibold">
-          Andrew Forbist
+          {currentUser.displayName || currentUser.email}
         </span>
         <Badge dot>
           <Avatar icon={<BellOutlined />} />
