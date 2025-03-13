@@ -6,6 +6,7 @@ import { useAuth } from '../context/authContext';
 
 const namecard = ({ name, balance, exp, cvv }) => {
     const { currentUser } = useAuth();
+    const { user, userLoggedIn, setUserLoggedIn, loginWithGoogle } = useAuth();
 
     return (
         <ConfigProvider
@@ -29,7 +30,7 @@ const namecard = ({ name, balance, exp, cvv }) => {
                     </div>
                 </div>
                 <div className="flex justify-between items-center mt-4 text-xl font-bold font-family">
-                {currentUser ? currentUser.displayName || currentUser.email : 'Guest'}
+                {user?.displayName || user?.email || "Guest"}
                 
                 </div>
                 <div className="flex justify-between items-end mt-2">

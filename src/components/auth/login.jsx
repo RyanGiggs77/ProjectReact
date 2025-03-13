@@ -1,51 +1,63 @@
-import React, { useState } from 'react'
-import { Navigate, Link } from 'react-router-dom'
-import { doSignInWithEmailAndPassword, doSignInWithGoogle } from '../../firebase/auth'
+import React, { useState } from 'react';
+import { Navigate, Link } from 'react-router-dom';
+import { doSignInWithEmailAndPassword } from '../../firebase/auth';
 import { useAuth } from '../../context/authContext'
 
 const Login = () => {
-    const { userLoggedIn } = useAuth()
+    const { user, userLoggedIn, setUserLoggedIn, loginWithGoogle, loginWithEmailPassword } = useAuth();
 
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [isSigningIn, setIsSigningIn] = useState(false)
-    const [errorMessage, setErrorMessage] = useState('')
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [isSigningIn, setIsSigningIn] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
-    console.log(userLoggedIn)
-    console.log(email)
-    const onSubmit = async (e) => {
+    // const onSubmit = async (e) => {
+    //     e.preventDefault();
+    //     if (!isSigningIn) {
+    //         setIsSigningIn(true);
+    //         try {
+    //             await doSignInWithEmailAndPassword(email, password);
+    //         } catch (error) {
+    //             console.error(error);
+    //             if (
+    //                 error.code === "auth/wrong-password" ||
+    //                 error.code === "auth/user-not-found" ||
+    //                 error.code === "auth/invalid-credential"
+    //             ) {
+    //                 setErrorMessage("Email atau password yang Anda masukkan salah.");
+    //             } else {
+    //                 setErrorMessage("Terjadi kesalahan, silakan coba lagi nanti.");
+    //             }
+    //             setIsSigningIn(false);
+    //         }
+    //     }
+    // };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!isSigningIn) {
+        try {
+            await loginWithEmailPassword(email, password);
+        
+        } catch (error) {
+            console.error("Login failed:", error);
+        }
+        setIsSigningIn(false);
+    }
+    };
+
+    const handleGoogleSignIn = async (e) => {
         e.preventDefault();
         if (!isSigningIn) {
             setIsSigningIn(true);
             try {
-                await doSignInWithEmailAndPassword(email, password);
-                // Jika login berhasil, navigasi akan dilakukan oleh useAuth
+                await loginWithGoogle(); // Panggil fungsi login dengan Google dari authProvider.js
             } catch (error) {
-                console.error(error);
-                if (
-                    error.code === "auth/wrong-password" ||
-                    error.code === "auth/user-not-found" ||
-                    error.code === "auth/invalid-credential"
-                ) {
-                    setErrorMessage("Email atau password yang Anda masukkan salah.");
-                } else {
-                    setErrorMessage("Terjadi kesalahan, silakan coba lagi nanti.");
-                }
-                setIsSigningIn(false);
+                console.error("Google Login Error:", error);
             }
+            setIsSigningIn(false);
         }
     };
-    
-
-    const onGoogleSignIn = (e) => {
-        e.preventDefault()
-        if (!isSigningIn) {
-            setIsSigningIn(true)
-            doSignInWithGoogle().catch(err => {
-                setIsSigningIn(false)
-            })
-        }
-    }
 
     return (
         <div>
@@ -58,10 +70,7 @@ const Login = () => {
                             <h3 className="text-gray-800 text-xl font-semibold sm:text-2xl">Welcome Back</h3>
                         </div>
                     </div>
-                    <form
-                        onSubmit={onSubmit}
-                        className="space-y-5"
-                    >
+                    <form onSubmit={handleSubmit} className="space-y-5">
                         <div>
                             <label className="text-sm text-gray-600 font-bold">
                                 Email
@@ -70,12 +79,10 @@ const Login = () => {
                                 type="email"
                                 autoComplete='email'
                                 required
-                                value={email} onChange={(e) => { setEmail(e.target.value) }}
+                                value={email} onChange={(e) => setEmail(e.target.value)}
                                 className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg transition duration-300"
                             />
                         </div>
-
-
                         <div>
                             <label className="text-sm text-gray-600 font-bold">
                                 Password
@@ -84,7 +91,7 @@ const Login = () => {
                                 type="password"
                                 autoComplete='current-password'
                                 required
-                                value={password} onChange={(e) => { setPassword(e.target.value) }}
+                                value={password} onChange={(e) => setPassword(e.target.value)}
                                 className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg transition duration-300"
                             />
                         </div>
@@ -107,8 +114,9 @@ const Login = () => {
                     </div>
                     <button
                         disabled={isSigningIn}
-                        onClick={(e) => { onGoogleSignIn(e) }}
-                        className={`w-full flex items-center justify-center gap-x-3 py-2.5 border rounded-lg text-sm font-medium  ${isSigningIn ? 'cursor-not-allowed' : 'hover:bg-gray-100 transition duration-300 active:bg-gray-100'}`}>
+                        onClick={handleGoogleSignIn}
+                        className={`w-full flex items-center justify-center gap-x-3 py-2.5 border rounded-lg text-sm font-medium ${isSigningIn ? 'cursor-not-allowed' : 'hover:bg-gray-100 transition duration-300 active:bg-gray-100'}`}
+                    >
                         <svg className="w-5 h-5" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <g clipPath="url(#clip0_17_40)">
                                 <path d="M47.532 24.5528C47.532 22.9214 47.3997 21.2811 47.1175 19.6761H24.48V28.9181H37.4434C36.9055 31.8988 35.177 34.5356 32.6461 36.2111V42.2078H40.3801C44.9217 38.0278 47.532 31.8547 47.532 24.5528Z" fill="#4285F4" />
@@ -127,7 +135,7 @@ const Login = () => {
                 </div>
             </main>
         </div>
-    )
-}
+    );
+};
 
-export default Login
+export default Login;

@@ -4,6 +4,11 @@ import tailwindcss from 'tailwindcss'
 
 export default defineConfig({
   plugins: [react()],
+  server: {
+    headers: {
+      'Cross-Origin-Embedder-Policy': 'unsafe-none'
+    }
+  },
   css: {
     postcss: {
       plugins: [tailwindcss()],
