@@ -1,20 +1,19 @@
 import React, { useState } from 'react';
-import { ConfigProvider, Avatar, Badge, Input, Button, Drawer } from 'antd';
+import { Avatar, Badge, Input, Button, Drawer } from 'antd';
 import { MenuOutlined, MessageOutlined, BellOutlined } from '@ant-design/icons';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { doSignOut } from '../../firebase/auth';
 import { useAuth } from '../../context/authContext';
-import Sidebar from '../sider/Sidebar'
+import Sidebar from '../Sider/Sidebar';
 
 const { Search } = Input;
 
 const Navbar = () => {
-  const { currentUser } = useAuth();
+  const { user, logout } = useAuth();  // Ambil user dari AuthContext
   const location = useLocation();
   const navigate = useNavigate();
-  const [isDrawerOpen, setDrawerOpen] = useState(false); // State untuk drawer
+  const [isDrawerOpen, setDrawerOpen] = useState(false);
 
-  const onSearch = (value, _e, info) => console.log(info?.source, value);
+  const onSearch = (value) => console.log(value);
 
   const getHeaderTitle = () => {
     switch (location.pathname) {
@@ -29,7 +28,7 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      await doSignOut();
+      await logout();
       navigate('/login');
     } catch (error) {
       console.error('Error logging out:', error);
@@ -38,7 +37,6 @@ const Navbar = () => {
 
   return (
     <div className="flex justify-between h-[64px] p-4 bg-white shadow-md">
-      {/* Tombol Hamburger untuk Mobile */}
       <Button 
         type="text" 
         className="sm:hidden" 
@@ -51,22 +49,30 @@ const Navbar = () => {
       </div>
 
       <div className="hidden sm:flex flex-row-reverse items-center gap-4">
-        {/* Tombol Logout */}
         <Button onClick={handleLogout} type="primary" className="bg-[#1E4841] border-[#1E4841]">
           Logout
         </Button>
-        <Avatar style={{ backgroundColor: '#BBF49C', color: '#f56a00' }} />
+
+        {/* Avatar Profile */}
+        <Avatar style={{ backgroundColor: '#BBF49C', color: '#f56a00' }} src={user?.photoURL}>
+          {user?.displayName?.charAt(0) || user?.email?.charAt(0) || "G"}
+        </Avatar>
+
+        {/* Nama atau email pengguna */}
         <span className="text-[#1E4841] text-lg font-semibold">
-          {currentUser.displayName || currentUser.email}
+          {user?.displayName || user?.email || "Guest"}
         </span>
+
+        {/* Notifikasi & Pesan */}
         <Badge dot>
           <Avatar icon={<BellOutlined />} />
         </Badge>
         <Avatar icon={<MessageOutlined />} />
-        <Search className="hidden lg:flex" placeholder="input search text" onSearch={onSearch} style={{ width: 200 }} />
+
+        {/* Search Box */}
+        <Search className="hidden lg:flex" placeholder="Search..." onSearch={onSearch} style={{ width: 200 }} />
       </div>
 
-      {/* Drawer untuk Sidebar di Mobile */}
       <Drawer 
         title="Menu" 
         placement="left" 
