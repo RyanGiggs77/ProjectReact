@@ -72,6 +72,8 @@ export const AuthProvider = ({ children }) => {
             });
     
             const data = await response.json();
+            console.log("Response Login:", data); // 🔍 Debugging: Lihat data yang diterima
+    
             if (data.accessToken) {
                 localStorage.setItem('accessToken', data.accessToken);
                 localStorage.setItem('user', JSON.stringify({
@@ -89,6 +91,8 @@ export const AuthProvider = ({ children }) => {
                     photoURL: data.photoURL
                 });
                 setUserLoggedIn(true);
+    
+                console.log("Access Token Stored:", data.accessToken); // 🔍 Debugging: Pastikan token tersimpan
             }
         } catch (error) {
             console.error('Login Error:', error);
