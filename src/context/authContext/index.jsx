@@ -7,25 +7,78 @@ const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
+    // Inisialisasi state dari localStorage (jika ada)
+    const [user, setUser] = useState(() => {
+        const storedUser = localStorage.getItem("user");
+        return storedUser ? JSON.parse(storedUser) : null;
+    });
     const [accessToken, setAccessToken] = useState(localStorage.getItem("accessToken"));
-    const [userLoggedIn, setUserLoggedIn] = useState(false);
+    const [userLoggedIn, setUserLoggedIn] = useState(!!accessToken);
 
+    // Fungsi refresh token
+    const refreshAccessToken = async () => {
+        try {
+            const response = await fetch('http://localhost:5000/auth/refresh', {
+                method: 'POST',
+                credentials: 'include'
+            });
+            const data = await response.json();
+            if (data.accessToken) {
+                localStorage.setItem('accessToken', data.accessToken);
+                setAccessToken(data.accessToken);
+                return data.accessToken;
+            } else {
+                await logout();
+            }
+        } catch (error) {
+            console.error('Failed to refresh token:', error);
+            await logout();
+        }
+    };
+
+    // Middleware fetch yang menangani auto-refresh token
+    const fetchWithAuth = async (url, options = {}) => {
+        const token = localStorage.getItem('accessToken');
+        if (token) {
+            if (!options.headers) options.headers = {};
+            options.headers['Authorization'] = `Bearer ${token}`;
+        }
+        let response = await fetch(url, options);
+        if (response.status === 403) {
+            const newToken = await refreshAccessToken();
+            if (newToken) {
+                options.headers['Authorization'] = `Bearer ${newToken}`;
+                response = await fetch(url, options);
+            }
+        }
+        return response;
+    };
+
+    // Gunakan onAuthStateChanged untuk mendeteksi perubahan Firebase
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             if (currentUser) {
-                setUser({
+                // Jika user Firebase ada (login dengan Google)
+                const newUser = {
                     uid: currentUser.uid,
                     email: currentUser.email,
                     displayName: currentUser.displayName || currentUser.email,
                     photoURL: currentUser.photoURL,
-                });
+                };
+                setUser(newUser);
                 setUserLoggedIn(true);
+                localStorage.setItem("user", JSON.stringify(newUser));
             } else {
-                setUser(null);
-                setUserLoggedIn(false);
-                localStorage.removeItem("accessToken");
-                setAccessToken(null);
+                // Jika Firebase tidak mendeteksi user,
+                // cek apakah masih ada accessToken di localStorage (login backend)
+                if (!localStorage.getItem("accessToken")) {
+                    setUser(null);
+                    setUserLoggedIn(false);
+                    localStorage.removeItem("user");
+                    localStorage.removeItem("accessToken");
+                    setAccessToken(null);
+                }
+                // Jika ada token, biarkan state user seperti dari localStorage
             }
         });
 
@@ -47,13 +100,15 @@ export const AuthProvider = ({ children }) => {
             const data = await response.json();
             if (data.accessToken) {
                 localStorage.setItem('accessToken', data.accessToken);
-                setAccessToken(data.accessToken);
-                setUser({
+                const newUser = {
                     uid: result.user.uid,
                     email: result.user.email,
                     displayName: result.user.displayName || result.user.email,
                     photoURL: result.user.photoURL,
-                });
+                };
+                localStorage.setItem('user', JSON.stringify(newUser));
+                setAccessToken(data.accessToken);
+                setUser(newUser);
                 setUserLoggedIn(true);
             }
         } catch (error) {
@@ -61,88 +116,44 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    // 🔹 Tambahkan login dengan Email & Password
     const loginWithEmailPassword = async (email, password) => {
         try {
-            const response = await fetch('http://localhost:5000/auth/login', {
+            const response = await fetchWithAuth('http://localhost:5000/auth/login', {
                 method: 'POST',
-                credentials: 'include', // ✅ Pastikan cookie refresh token dikirim
+                credentials: 'include',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
             });
-    
+
             const data = await response.json();
-            console.log("Response Login:", data); // 🔍 Debugging: Lihat data yang diterima
-    
             if (data.accessToken) {
                 localStorage.setItem('accessToken', data.accessToken);
-                localStorage.setItem('user', JSON.stringify({
+                const newUser = {
                     uid: data.userId, 
                     email: data.email,
                     displayName: data.displayName,
-                    photoURL: data.photoURL
-                }));
-    
+                    photoURL: data.photoURL,
+                };
+                localStorage.setItem('user', JSON.stringify(newUser));
                 setAccessToken(data.accessToken);
-                setUser({
-                    uid: data.userId,
-                    email: data.email,
-                    displayName: data.displayName,
-                    photoURL: data.photoURL
-                });
+                setUser(newUser);
                 setUserLoggedIn(true);
-    
-                console.log("Access Token Stored:", data.accessToken); // 🔍 Debugging: Pastikan token tersimpan
             }
         } catch (error) {
             console.error('Login Error:', error);
         }
     };
 
-    const registerWithEmailPassword = async (email, password) => {
-        try {
-            const response = await fetch('http://localhost:5000/auth/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            });
-    
-            const data = await response.json();
-            if (!response.ok) throw new Error(data.error || 'Registration failed');
-    
-            return data; // Kembalikan data user yang berhasil didaftarkan
-        } catch (error) {
-            throw error;
-        }
-    };
-    
-    
-    const refreshAccessToken = async () => {
-        try {
-            const response = await fetch('http://localhost:5000/auth/refresh', {
-                method: 'POST',
-                credentials: 'include' // ✅ Pastikan refresh token dikirim
-            });
-    
-            const data = await response.json();
-            if (data.accessToken) {
-                localStorage.setItem('accessToken', data.accessToken);
-                setAccessToken(data.accessToken);
-            }
-        } catch (error) {
-            console.error('Failed to refresh token:', error);
-        }
-    };
-    
-    
-
     const logout = async () => {
         try {
+            if (user && user.uid) {
+                await signOut(auth);
+                console.log('User signed out');
+            }
             await fetch('http://localhost:5000/auth/logout', {
                 method: 'POST',
                 credentials: 'include'
             });
-    
             localStorage.removeItem("accessToken");
             localStorage.removeItem("user");
             setUser(null);
@@ -156,14 +167,12 @@ export const AuthProvider = ({ children }) => {
     return (
         <AuthContext.Provider value={{ 
             user, 
-    setUser,  // ✅ Tambahkan ini
-    userLoggedIn, 
-    setUserLoggedIn,  // ✅ Tambahkan ini juga jika dibutuhkan
-    accessToken, 
-    loginWithGoogle, 
-    loginWithEmailPassword, 
-    registerWithEmailPassword, 
-    logout, 
+            userLoggedIn, 
+            accessToken, 
+            loginWithGoogle, 
+            loginWithEmailPassword, 
+            logout,
+            fetchWithAuth // opsional, jika ingin dipakai di komponen lain
         }}>
             {children}
         </AuthContext.Provider>

@@ -36,14 +36,13 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!isSigningIn) {
-        try {
-            await loginWithEmailPassword(email, password);
-        
-        } catch (error) {
-            console.error("Login failed:", error);
+            setIsSigningIn(true);
+            try {
+                await loginWithEmailPassword(email, password);
+            } catch (error) {
+                console.error("Login failed:", error);
+            } 
         }
-        setIsSigningIn(false);
-    }
     };
 
     const handleGoogleSignIn = async (e) => {

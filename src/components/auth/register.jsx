@@ -6,7 +6,7 @@ import { doCreateUserWithEmailAndPassword } from '../../firebase/auth'
 const Register = () => {
 
     const navigate = useNavigate()
-    const { userLoggedIn, setUser, setUserLoggedIn,registerWithEmailPassword } = useAuth(); 
+    const { userLoggedIn, setUser, setUserLoggedIn, registerWithEmailPassword } = useAuth();
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setconfirmPassword] = useState('')
@@ -25,7 +25,7 @@ const Register = () => {
 
         try {
             const data = await registerWithEmailPassword(email, password);
-            
+
             // Simpan user ke localStorage
             localStorage.setItem('user', JSON.stringify(data.user));
 
@@ -80,7 +80,6 @@ const Register = () => {
                             <label className="text-sm text-gray-600 font-bold">Confirm Password</label>
                             <input
                                 disabled={isRegistering}
-                                disabled={isRegistering}
                                 type="password"
                                 autoComplete="off"
                                 required
@@ -95,11 +94,10 @@ const Register = () => {
                         <button
                             type="submit"
                             disabled={isRegistering}
-                            className={`w-full px-4 py-2 text-white font-medium rounded-lg ${
-                                isRegistering
+                            className={`w-full px-4 py-2 text-white font-medium rounded-lg ${isRegistering
                                     ? 'bg-gray-300 cursor-not-allowed'
                                     : 'bg-indigo-600 hover:bg-indigo-700 hover:shadow-xl transition duration-300'
-                            }`}
+                                }`}
                         >
                             {isRegistering ? 'Signing Up...' : 'Sign Up'}
                         </button>

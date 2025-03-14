@@ -81,7 +81,7 @@ const NameCard = () => {
                     {/* Balance Amount */}
                     <div>
                         <div className="text-[10px] opacity-80">Balance Amount</div>
-                        <div className="font-bold text-xl">{account?.balance || '0.00'}</div>
+                        <div className="font-bold text-xl">${account?.balance || '0.00'}</div>
                     </div>
 
                     {/* EXP dan CVV (rata kanan) */}
