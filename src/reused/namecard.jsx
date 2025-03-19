@@ -7,31 +7,25 @@ import { useAuth } from '../context/authContext';
 const NameCard = () => {
     const { user, accessToken } = useAuth(); // Ambil data user dari context
     const [account, setAccount] = useState(null); // State untuk menyimpan data akun
-    
+
+    console.log(accessToken);
 
     useEffect(() => {
         const fetchAccount = async () => {
-            // if (!user || !user.accessToken) {
-            //     console.log("User atau accessToken tidak tersedia, request tidak dilakukan.");
-            //     return;
-            // }
-    
-            // console.log("Fetching account data...");
-    
             try {
-                const response = await fetch('http://localhost:5000/auth/account', {
+                const response = await fetch('https://react-express-backend.vercel.app/account', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${accessToken}`, 
                         'Content-Type': 'application/json'
                     }
                 });
-    
+
                 console.log("Response status:", response.status);
-    
+
                 const data = await response.json();
                 console.log("Response data:", data);
-    
+
                 if (response.ok) {
                     setAccount(data);
                 } else {
@@ -41,15 +35,14 @@ const NameCard = () => {
                 console.error("Error fetching account:", error);
             }
         };
-    
+
         if (user) {
             console.log("User tersedia, memanggil fetchAccount:", user);
             fetchAccount();
         } else {
             console.log("User belum tersedia.");
         }
-    }, [user]);
-    
+    }, [user, accessToken]); // ✅ Tambahkan dependency array untuk mencegah infinite loop
 
     return (
         <ConfigProvider
@@ -100,4 +93,3 @@ const NameCard = () => {
 };
 
 export default NameCard;
-

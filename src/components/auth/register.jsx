@@ -1,17 +1,15 @@
-import React, { useState } from 'react'
-import { Navigate, Link, useNavigate } from 'react-router-dom'
-import { useAuth } from '../../context/authContext'
-import { doCreateUserWithEmailAndPassword } from '../../firebase/auth'
+import React, { useState } from 'react';
+import { Navigate, Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/authContext';
 
 const Register = () => {
-
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     const { userLoggedIn, setUser, setUserLoggedIn, registerWithEmailPassword } = useAuth();
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [confirmPassword, setconfirmPassword] = useState('')
-    const [isRegistering, setIsRegistering] = useState(false)
-    const [errorMessage, setErrorMessage] = useState('')
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setconfirmPassword] = useState('');
+    const [isRegistering, setIsRegistering] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     const onSubmit = async (e) => {
         e.preventDefault();

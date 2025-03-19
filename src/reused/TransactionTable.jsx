@@ -10,7 +10,7 @@ const TransactionTable = ({ data, columns }) => {
     useEffect(() => {
         const fetchTransactions = async () => {
             try {
-                const response = await fetch('http://localhost:5000/auth/transactions', {
+                const response = await fetch('https://react-express-backend.vercel.app/transactions', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${accessToken}`,
@@ -34,7 +34,7 @@ const TransactionTable = ({ data, columns }) => {
         if (user) {
             fetchTransactions();
         }
-    }, [user]); // ✅ Tambahkan dependency array untuk mencegah infinite loop
+    }, [user, accessToken]); // ✅ Tambahkan dependency array untuk mencegah infinite loop
 
     return (
         <ConfigProvider

@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
     // Fungsi refresh token
     const refreshAccessToken = async () => {
         try {
-            const response = await fetch('http://localhost:5000/auth/refresh', {
+            const response = await fetch('https://react-express-backend.vercel.app/auth/refresh', {
                 method: 'POST',
                 credentials: 'include'
             });
@@ -52,6 +52,31 @@ export const AuthProvider = ({ children }) => {
             }
         }
         return response;
+    };
+
+    // Fungsi untuk register dengan email dan password
+    const registerWithEmailPassword = async (email, password) => {
+        try {
+            const response = await fetch('https://react-express-backend.vercel.app/auth/register', {
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            const data = await response.json();
+            if (data.user) {
+                localStorage.setItem('user', JSON.stringify(data.user));
+                setUser(data.user);
+                setUserLoggedIn(true);
+                return data;
+            } else {
+                throw new Error(data.error || 'Registration failed');
+            }
+        } catch (error) {
+            console.error('Registration Error:', error);
+            throw error;
+        }
     };
 
     // Gunakan onAuthStateChanged untuk mendeteksi perubahan Firebase
@@ -90,7 +115,7 @@ export const AuthProvider = ({ children }) => {
             const result = await doSignInWithGoogle();
             const idToken = await result.user.getIdToken();
 
-            const response = await fetch('http://localhost:5000/auth/google-login', {
+            const response = await fetch('https://react-express-backend.vercel.app/auth/google-login', {
                 method: 'POST',
                 credentials: 'include',
                 headers: { 'Content-Type': 'application/json' },
@@ -98,6 +123,7 @@ export const AuthProvider = ({ children }) => {
             });
 
             const data = await response.json();
+            console.log(data.accessToken)
             if (data.accessToken) {
                 localStorage.setItem('accessToken', data.accessToken);
                 const newUser = {
@@ -118,7 +144,7 @@ export const AuthProvider = ({ children }) => {
 
     const loginWithEmailPassword = async (email, password) => {
         try {
-            const response = await fetchWithAuth('http://localhost:5000/auth/login', {
+            const response = await fetch('https://react-express-backend.vercel.app/auth/login', {
                 method: 'POST',
                 credentials: 'include',
                 headers: { 'Content-Type': 'application/json' },
@@ -150,7 +176,7 @@ export const AuthProvider = ({ children }) => {
                 await signOut(auth);
                 console.log('User signed out');
             }
-            await fetch('http://localhost:5000/auth/logout', {
+            await fetch('https://react-express-backend.vercel.app/auth/logout', {
                 method: 'POST',
                 credentials: 'include'
             });
@@ -171,6 +197,7 @@ export const AuthProvider = ({ children }) => {
             accessToken, 
             loginWithGoogle, 
             loginWithEmailPassword, 
+            registerWithEmailPassword, // Tambahkan ini
             logout,
             fetchWithAuth // opsional, jika ingin dipakai di komponen lain
         }}>
