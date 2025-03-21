@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Avatar, Badge, Input, Button, Drawer } from 'antd';
 import { MenuOutlined, MessageOutlined, BellOutlined } from '@ant-design/icons';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -12,10 +12,48 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isDrawerOpen, setDrawerOpen] = useState(false);
+  const [promoName, setPromoName] = useState('');
 
   const onSearch = (value) => console.log(value);
 
+  useEffect(() => {
+    const fetchPromo = async () => {
+      const match = location.pathname.match(/\/promo\/(\d+)/);
+      const id = match ? match[1] : null;
+
+
+      if (id) {
+        try {
+          const response = await fetch(`https://react-express-backend.vercel.app/promos/${id}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+
+          const data = await response.json();
+          if (response.ok) {
+            setPromoName(data.promo_name);
+            console.log(`Promo name set to: ${data.promo_name}`); // Debug log
+          } else {
+            console.error("Failed to fetch promo:", data.error);
+          }
+        } catch (error) {
+          console.error("Error fetching promo:", error);
+        }
+      } else {
+        console.log('Not a promo path or id is missing'); // Debug log
+      }
+    };
+
+    fetchPromo();
+  }, [location.pathname]);
+
   const getHeaderTitle = () => {
+    if (location.pathname.startsWith('/promo/') && promoName) {
+      return `promo ${promoName}`;
+    }
+
     switch (location.pathname) {
       case '/':
         return 'Dashboard';
@@ -36,7 +74,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="flex justify-between h-[64px] p-4 bg-white shadow-md">
+    <div className="flex justify-between w-full h-[64px] p-4 bg-white shadow-md">
       <Button 
         type="text" 
         className="sm:hidden" 

@@ -7,6 +7,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Sidebar from './components/Sider/Sidebar';
 import Navbar from './components/Header/Navbar';
 import Promo from './pages/Promo';
+import Promo_id from './pages/Promo_id';
 import Dashboard from './pages/Dashboard';
 import Login from './components/auth/login';
 import Register from './components/auth/register';
@@ -87,11 +88,13 @@ const App = () => {
                           backgroundColor: '#ECF4E9',
                           zIndex: 1000,
                           height: 64,
-                          padding: '0 16px',
+                          padding: '0',
                           transition: 'left 0.2s',
                         }}
                       >
-                        <Navbar />
+                        <Routes>
+                          <Route path="/*" element={<Navbar />} />
+                        </Routes>
                       </Header>
 
                       <Content
@@ -107,6 +110,8 @@ const App = () => {
                           <Route path="/" element={<Dashboard />} />
                           <Route path="/home" element={<Dashboard />} />
                           <Route path="/promo" element={<Promo />} />
+                          <Route path="/promo/:id" element={<Promo_id />} />
+                          <Route path="*" element={<h1>404 Not Found</h1>} />
                         </Routes>
                       </Content>
                       <Footer style={{ textAlign: 'center' }}>Footer</Footer>
