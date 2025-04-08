@@ -3,13 +3,20 @@ import { Card, Row, Col, Modal, Form, Input, Upload, DatePicker } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import Button from '../reused/compButton';
+import { createClient } from '@supabase/supabase-js';
 
 const { Meta } = Card;
+
+// Initialize Supabase client
+const supabaseUrl = 'https://ehwdpowxrjrwrfcqgmad.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVod2Rwb3d4cmpyd3JmY3FnbWFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE4NDgwOTcsImV4cCI6MjA1NzQyNDA5N30.o4XrY_z9eAUqKcspvID0z3hChA7ZGQQOWw11QT3GMXc';
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 const Promo = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [form] = Form.useForm();
     const [promos, setPromos] = useState([]);
+    const [fileList, setFileList] = useState([]);
     const navigate = useNavigate();
 
     const showModal = useCallback(() => {
@@ -20,8 +27,10 @@ const Promo = () => {
         setIsModalVisible(false);
     }, []);
 
-    const handleOk = useCallback(() => {
-        form.validateFields().then((values) => {
+    const handleOk = useCallback(async () => {
+        try {
+            const values = await form.validateFields();
+
             // Convert DatePicker values to ISO strings
             values.promo_start = values.promo_start.toISOString();
             values.promo_end = values.promo_end.toISOString();
@@ -31,24 +40,42 @@ const Promo = () => {
             values.team_conditions = values.team_conditions.split(',').map(item => item.trim());
             values.partners = values.partners.split(',').map(item => item.trim());
 
+            // Upload image to Supabase
+            if (fileList.length > 0) {
+                const file = fileList[0].originFileObj;
+                const { data, error } = await supabase.storage
+                    .from('coinest')
+                    .upload(`public/${file.name}`, file);
+
+                if (error) {
+                    throw error;
+                }
+
+                const imageUrl = `${supabaseUrl}/storage/v1/object/public/${data.Key}`;
+                values.image_url = imageUrl;
+            }
+
             // Assuming you have an API endpoint to add a new promo
-            fetch('https://react-express-backend.vercel.app/promos', {
+            const response = await fetch('https://react-express-backend.vercel.app/promos', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(values)
-            })
-            .then(response => response.json())
-            .then(data => {
+            });
+
+            const data = await response.json();
+            if (response.ok) {
                 setPromos([...promos, data]);
                 setIsModalVisible(false);
-            })
-            .catch(error => {
-                console.error("Error adding promo:", error);
-            });
-        });
-    }, [form, promos]);
+                setFileList([]);
+            } else {
+                console.error("Failed to add promo:", data.error);
+            }
+        } catch (error) {
+            console.error("Error adding promo:", error);
+        }
+    }, [form, fileList, promos]);
 
     useEffect(() => {
         if (!isModalVisible) {
@@ -86,6 +113,10 @@ const Promo = () => {
         navigate(`/promo/${id}`);
     };
 
+    const handleFileChange = ({ fileList }) => {
+        setFileList(fileList);
+    };
+
     if (!promos) {
         return <p>Loading...</p>;
     }
@@ -105,7 +136,7 @@ const Promo = () => {
                                 cover={
                                     <img
                                         alt="Promo"
-                                        src={item.image}
+                                        src={item.image_url || "https://placehold.co/600x600"}
                                         style={{
                                             objectFit: 'cover',
                                             width: '100%',
@@ -122,7 +153,6 @@ const Promo = () => {
                                     description={
                                         <div style={{
                                             whiteSpace: 'nowrap',
-                                            // whiteSpace: 'nowrap',
                                             overflow: 'hidden',
                                             textOverflow: 'ellipsis',
                                         }}>
@@ -208,16 +238,24 @@ const Promo = () => {
                     >
                         <Input placeholder="Separate partners with commas" />
                     </Form.Item>
-                    <Form.Item label="image">
-                        <Form.Item name="image" valuePropName="fileList" noStyle>
-                            <Upload.Dragger name="files" disabled>
-                                <p className="ant-upload-drag-icon">
-                                    <InboxOutlined />
-                                </p>
-                                <p className="ant-upload-text">Click or drag file to this area to upload</p>
-                                <p className="ant-upload-hint">Support for a single or bulk upload.</p>
-                            </Upload.Dragger>
-                        </Form.Item>
+                    <Form.Item
+                        label="Upload Image"
+                        name="image"
+                        valuePropName="fileList"
+                        getValueFromEvent={e => e.fileList}
+                    >
+                        <Upload.Dragger
+                            name="files"
+                            beforeUpload={() => false}
+                            onChange={handleFileChange}
+                            fileList={fileList}
+                        >
+                            <p className="ant-upload-drag-icon">
+                                <InboxOutlined />
+                            </p>
+                            <p className="ant-upload-text">Click or drag file to this area to upload</p>
+                            <p className="ant-upload-hint">Support for a single or bulk upload.</p>
+                        </Upload.Dragger>
                     </Form.Item>
                 </Form>
             </Modal>
